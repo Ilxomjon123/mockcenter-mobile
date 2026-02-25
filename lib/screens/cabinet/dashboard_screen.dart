@@ -212,26 +212,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       );
                     },
                     onDirectPayment: _handleDirectPayment,
-                    onShowQrCode: (examUserId, provider) async {
-                      QrCodeModal.show(context, provider: provider, isLoading: true);
-                      try {
-                        final url = await context.read<ExamProvider>().getPaymentUrl(examUserId, provider);
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                        if (url.isNotEmpty) {
-                          QrCodeModal.show(
-                            context,
-                            provider: provider,
-                            paymentUrl: url,
-                            onOpenPaymentUrl: () async {
-                              final uri = Uri.parse(url);
-                              await launchUrl(uri, mode: LaunchMode.externalApplication);
-                            },
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) Navigator.pop(context);
-                      }
+                    onShowQrCode: (examUserId, provider) {
+                      QrCodeModal.show(context, provider: provider, examUserId: examUserId);
                     },
                     onOpenSpeakingSlot: (examId, examUserId) {
                       SpeakingSlotModal.show(

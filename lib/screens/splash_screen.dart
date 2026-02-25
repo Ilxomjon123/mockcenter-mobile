@@ -29,20 +29,23 @@ class _SplashScreenState extends State<SplashScreen> {
                   colors: [AppColors.primary, AppColors.primary800],
                 ),
               ),
-              child: const Center(
+              child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.school_rounded, size: 64, color: Colors.white),
-                    SizedBox(height: 16),
-                    Text(
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset('assets/logo.png', width: 64, height: 64),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
                       'MockCenter',
                       style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -0.5),
                     ),
-                    SizedBox(height: 8),
-                    Text('IELTS Mock Tests', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                    SizedBox(height: 40),
-                    CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.white), strokeWidth: 2),
+                    const SizedBox(height: 8),
+                    const Text('IELTS Mock Tests', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                    const SizedBox(height: 40),
+                    const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.white), strokeWidth: 2),
                   ],
                 ),
               ),
@@ -79,8 +82,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 colors: [AppColors.primary, AppColors.primary800],
               ),
             ),
-            child: const Center(
-              child: Icon(Icons.school_rounded, size: 64, color: Colors.white),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset('assets/logo.png', width: 64, height: 64),
+              ),
             ),
           ),
         );

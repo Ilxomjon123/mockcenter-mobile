@@ -97,19 +97,18 @@ class ExamProvider extends ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> validatePromoCode(String code, int examId) async {
-    final response = await _api.post('/app/exams/promo/validate', body: {
-      'code': code,
-      'exam_id': examId,
-    }, auth: true);
+    final response = await _api.get(
+      '/app/exams/promo-codes/validate?code=$code&exam_id=$examId',
+      auth: true,
+    );
     return response as Map<String, dynamic>;
   }
 
   Future<String> getPaymentUrl(String examUserId, String provider) async {
-    final response = await _api.post('/app/exams/pay', body: {
-      'exam_user_id': examUserId,
+    final response = await _api.post('/app/exams/register/$examUserId/pay', body: {
       'provider': provider,
     }, auth: true);
-    return response['url'] as String? ?? response['data']?['url'] as String? ?? '';
+    return response['redirect_url'] as String? ?? '';
   }
 
   Future<List<SpeakingSlot>> getSpeakingSlots(int examId) async {

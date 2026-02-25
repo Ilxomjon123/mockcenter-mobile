@@ -77,16 +77,9 @@ class WelcomeHeader extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.primary700],
-              ),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(Icons.school_rounded, color: Colors.white, size: 22),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Image.asset('assets/logo.png', width: 44, height: 44),
           ),
         ],
       ),

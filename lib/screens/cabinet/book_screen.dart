@@ -5,7 +5,6 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_colors_extension.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/loading_indicator.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../dialogs/location_modal.dart';
 import '../../dialogs/promo_code_modal.dart';
 import '../../dialogs/qr_code_modal.dart';
@@ -185,26 +184,8 @@ class _BookScreenState extends State<BookScreen> {
                   onOpenLocation: (location) => LocationModal.show(context, location),
                   onOpenCredentials: (_) {},
                   onDirectPayment: (_, __) {},
-                  onShowQrCode: (examUserId, provider) async {
-                    QrCodeModal.show(context, provider: provider, isLoading: true);
-                    try {
-                      final url = await context.read<ExamProvider>().getPaymentUrl(examUserId, provider);
-                      if (!context.mounted) return;
-                      Navigator.pop(context);
-                      if (url.isNotEmpty) {
-                        QrCodeModal.show(
-                          context,
-                          provider: provider,
-                          paymentUrl: url,
-                          onOpenPaymentUrl: () async {
-                            final uri = Uri.parse(url);
-                            await launchUrl(uri, mode: LaunchMode.externalApplication);
-                          },
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) Navigator.pop(context);
-                    }
+                  onShowQrCode: (examUserId, provider) {
+                    QrCodeModal.show(context, provider: provider, examUserId: examUserId);
                   },
                   onOpenSpeakingSlot: (_, __) {},
                 ),

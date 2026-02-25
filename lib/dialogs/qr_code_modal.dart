@@ -1,29 +1,26 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../providers/exam_provider.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_colors_extension.dart';
 import '../widgets/glass_button.dart';
 
-class QrCodeModal extends StatelessWidget {
+class QrCodeModal extends StatefulWidget {
   final String provider;
-  final String? paymentUrl;
-  final bool isLoading;
-  final VoidCallback? onOpenPaymentUrl;
+  final String examUserId;
 
   const QrCodeModal({
     super.key,
     required this.provider,
-    this.paymentUrl,
-    this.isLoading = false,
-    this.onOpenPaymentUrl,
+    required this.examUserId,
   });
 
   static Future<void> show(BuildContext context, {
     required String provider,
-    String? paymentUrl,
-    bool isLoading = false,
-    VoidCallback? onOpenPaymentUrl,
+    required String examUserId,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -31,20 +28,60 @@ class QrCodeModal extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => QrCodeModal(
         provider: provider,
-        paymentUrl: paymentUrl,
-        isLoading: isLoading,
-        onOpenPaymentUrl: onOpenPaymentUrl,
+        examUserId: examUserId,
       ),
     );
   }
 
+  @override
+  State<QrCodeModal> createState() => _QrCodeModalState();
+}
+
+class _QrCodeModalState extends State<QrCodeModal> {
+  String? _paymentUrl;
+  bool _isLoading = true;
+  String? _error;
+
   String get _providerName {
-    switch (provider) {
+    switch (widget.provider) {
       case 'payme': return 'Payme';
       case 'click': return 'Click';
       case 'uzum': return 'Uzum';
-      default: return provider;
+      default: return widget.provider;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPaymentUrl();
+  }
+
+  Future<void> _fetchPaymentUrl() async {
+    try {
+      final url = await context.read<ExamProvider>().getPaymentUrl(
+        widget.examUserId,
+        widget.provider,
+      );
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _paymentUrl = url.isNotEmpty ? url : null;
+        if (url.isEmpty) _error = 'Payment URL not available';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  void _openInApp() async {
+    if (_paymentUrl == null) return;
+    final uri = Uri.parse(_paymentUrl!);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -87,7 +124,7 @@ class QrCodeModal extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              if (isLoading)
+              if (_isLoading)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Column(
@@ -98,12 +135,31 @@ class QrCodeModal extends StatelessWidget {
                     ],
                   ),
                 )
-              else if (paymentUrl != null) ...[
+              else if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Column(
+                    children: [
+                      Icon(Icons.error_outline_rounded, size: 40, color: colors.errorText),
+                      const SizedBox(height: 12),
+                      Text(_error!, style: TextStyle(fontSize: 13, color: colors.errorText)),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() { _isLoading = true; _error = null; });
+                          _fetchPaymentUrl();
+                        },
+                        child: const Text('Try again', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                      ),
+                    ],
+                  ),
+                )
+              else if (_paymentUrl != null) ...[
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: colors.glassShadow, blurRadius: 10)]),
                   child: QrImageView(
-                    data: paymentUrl!,
+                    data: _paymentUrl!,
                     version: QrVersions.auto,
                     size: 220,
                     backgroundColor: Colors.white,
@@ -121,8 +177,7 @@ class QrCodeModal extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                if (onOpenPaymentUrl != null)
-                  GlassButton(text: 'Open in App', onPressed: onOpenPaymentUrl, width: double.infinity),
+                GlassButton(text: 'Open in App', onPressed: _openInApp, width: double.infinity),
               ],
 
               const SizedBox(height: 10),
