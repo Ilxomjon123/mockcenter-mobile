@@ -104,6 +104,14 @@ class ExamProvider extends ChangeNotifier {
     return response as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>> applyPromoCode(String examUserId, String promoCode) async {
+    final response = await _api.post('/app/exams/register/$examUserId/apply-promo', body: {
+      'promo_code': promoCode,
+    }, auth: true);
+    await fetchUpcomingExams();
+    return response as Map<String, dynamic>;
+  }
+
   Future<String> getPaymentUrl(String examUserId, String provider) async {
     final response = await _api.post('/app/exams/register/$examUserId/pay', body: {
       'provider': provider,

@@ -19,6 +19,7 @@ class ExamCard extends StatelessWidget {
   final void Function(String examUserId, String provider) onDirectPayment;
   final void Function(String examUserId, String provider) onShowQrCode;
   final void Function(int examId, String examUserId) onOpenSpeakingSlot;
+  final void Function(int examId, String examUserId)? onApplyPromo;
 
   const ExamCard({
     super.key,
@@ -35,6 +36,7 @@ class ExamCard extends StatelessWidget {
     required this.onDirectPayment,
     required this.onShowQrCode,
     required this.onOpenSpeakingSlot,
+    this.onApplyPromo,
   });
 
   Color _borderColor(AppColorsExtension colors) {
@@ -337,6 +339,22 @@ class ExamCard extends StatelessWidget {
                   isLoading: payingExamId == exam.examUser!.id && payingProvider == 'click',
                 ),
               ),
+              if (onApplyPromo != null) ...[
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => onApplyPromo!(exam.id, exam.examUser!.id),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: colors.amber50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.amber400.withValues(alpha: 0.3)),
+                    ),
+                    child: const Icon(Icons.confirmation_number_rounded, size: 20, color: AppColors.amber700),
+                  ),
+                ),
+              ],
             ],
           ),
         ],

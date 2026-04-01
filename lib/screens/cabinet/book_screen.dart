@@ -181,6 +181,9 @@ class _BookScreenState extends State<BookScreen> {
                   onOpenPromo: (examId) {
                     PromoCodeModal.show(context, examId: examId, examProvider: examProvider);
                   },
+                  onApplyPromo: (examId, examUserId) {
+                    PromoCodeModal.show(context, examId: examId, examProvider: examProvider, mode: 'apply', examUserId: examUserId);
+                  },
                   onOpenLocation: (location) => LocationModal.show(context, location),
                   onOpenCredentials: (_) {},
                   onDirectPayment: (_, __) {},

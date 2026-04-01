@@ -17,7 +17,6 @@ import 'widgets/next_exam_countdown.dart';
 import 'widgets/exam_card.dart';
 import 'widgets/book_exam_banner.dart';
 import 'widgets/recent_results.dart';
-import 'widgets/preview_cards.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -200,6 +199,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onOpenPromo: (examId) {
                       PromoCodeModal.show(context, examId: examId, examProvider: examProvider);
                     },
+                    onApplyPromo: (examId, examUserId) {
+                      PromoCodeModal.show(context, examId: examId, examProvider: examProvider, mode: 'apply', examUserId: examUserId);
+                    },
                     onOpenLocation: (location) {
                       LocationModal.show(context, location);
                     },
@@ -237,10 +239,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
 
-              const SizedBox(height: 16),
-
-              // Preview cards
-              const PreviewCards(),
             ],
           ],
         ),

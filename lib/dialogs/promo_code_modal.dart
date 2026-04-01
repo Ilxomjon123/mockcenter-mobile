@@ -9,16 +9,22 @@ import '../widgets/glass_button.dart';
 class PromoCodeModal extends StatefulWidget {
   final int examId;
   final ExamProvider examProvider;
+  final String mode; // 'register' or 'apply'
+  final String? examUserId; // required for 'apply' mode
 
   const PromoCodeModal({
     super.key,
     required this.examId,
     required this.examProvider,
+    this.mode = 'register',
+    this.examUserId,
   });
 
   static Future<void> show(BuildContext context, {
     required int examId,
     required ExamProvider examProvider,
+    String mode = 'register',
+    String? examUserId,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -26,7 +32,12 @@ class PromoCodeModal extends StatefulWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: PromoCodeModal(examId: examId, examProvider: examProvider),
+        child: PromoCodeModal(
+          examId: examId,
+          examProvider: examProvider,
+          mode: mode,
+          examUserId: examUserId,
+        ),
       ),
     );
   }
@@ -60,13 +71,21 @@ class _PromoCodeModalState extends State<PromoCodeModal> {
     }
   }
 
-  Future<void> _register() async {
+  Future<void> _submit() async {
+    if (widget.mode == 'apply' && !_isValidated) return;
     setState(() => _isRegistering = true);
     try {
-      await widget.examProvider.registerForExam(
-        widget.examId,
-        promoCode: _isValidated ? _controller.text : null,
-      );
+      if (widget.mode == 'apply') {
+        await widget.examProvider.applyPromoCode(
+          widget.examUserId!,
+          _controller.text,
+        );
+      } else {
+        await widget.examProvider.registerForExam(
+          widget.examId,
+          promoCode: _isValidated ? _controller.text : null,
+        );
+      }
       if (mounted) Navigator.pop(context);
     } catch (e) {
       setState(() { _error = e.toString(); _isRegistering = false; });
@@ -227,15 +246,15 @@ class _PromoCodeModalState extends State<PromoCodeModal> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: GlassButton(
-                      text: 'Book Your Seat',
+                      text: widget.mode == 'apply' ? 'Apply Promo' : 'Book Your Seat',
                       icon: Icons.arrow_forward_rounded,
-                      onPressed: _register,
+                      onPressed: (widget.mode == 'apply' && !_isValidated) ? null : _submit,
                       isLoading: _isRegistering,
                     ),
                   ),
                 ],
               ),
-              if (!_isValidated) ...[
+              if (!_isValidated && widget.mode == 'register') ...[
                 const SizedBox(height: 10),
                 Text('Click "Book Your Seat" to continue without a promo code', style: TextStyle(fontSize: 11, color: colors.textMuted), textAlign: TextAlign.center),
               ],

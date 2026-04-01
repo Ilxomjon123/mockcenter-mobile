@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_colors_extension.dart';
@@ -83,22 +82,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       phone: _phoneController.text.trim(),
     );
     if (success) _startResendCooldown();
-  }
-
-  Future<void> _handleTelegramAuth() async {
-    final auth = context.read<AuthProvider>();
-    final success = await auth.initiateTelegramAuth();
-    if (success && auth.telegramBotUrl != null && mounted) {
-      await launchUrl(Uri.parse(auth.telegramBotUrl!), mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _handleGoogleAuth() async {
-    final auth = context.read<AuthProvider>();
-    final url = await auth.getGoogleRedirectUrl();
-    if (url != null) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    }
   }
 
   String _maskPhone(String phone) {
@@ -264,46 +247,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
 
-                                    // Divider - "Or continue with"
-                                    const SizedBox(height: 24),
-                                    Row(
-                                      children: [
-                                        Expanded(child: Container(height: 1, color: colors.border.withValues(alpha: 0.5))),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                                          child: Text('Or continue with', style: TextStyle(fontSize: 12, color: colors.textMuted)),
-                                        ),
-                                        Expanded(child: Container(height: 1, color: colors.border.withValues(alpha: 0.5))),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-
-                                    // Social buttons
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: _SocialButton(
-                                            label: 'Telegram',
-                                            color: const Color(0xFF0088CC),
-                                            icon: Icons.send_rounded,
-                                            onTap: _handleTelegramAuth,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: _SocialButton(
-                                            label: 'Google',
-                                            color: colors.bgPrimary,
-                                            textColor: colors.textPrimary,
-                                            icon: Icons.g_mobiledata_rounded,
-                                            iconSize: 28,
-                                            bordered: true,
-                                            borderColor: colors.border,
-                                            onTap: _handleGoogleAuth,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ] else ...[
                                     // STEP 2: Verification
                                     // Code input
@@ -413,59 +356,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
-class _SocialButton extends StatelessWidget {
-  final String label;
-  final Color color;
-  final Color? textColor;
-  final IconData icon;
-  final double iconSize;
-  final bool bordered;
-  final Color? borderColor;
-  final VoidCallback? onTap;
-
-  const _SocialButton({
-    required this.label,
-    required this.color,
-    this.textColor,
-    required this.icon,
-    this.iconSize = 20,
-    this.bordered = false,
-    this.borderColor,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(12),
-            border: bordered ? Border.all(color: (borderColor ?? colors.border).withValues(alpha: 0.5)) : null,
-            boxShadow: !bordered
-                ? [BoxShadow(color: color.withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 2))]
-                : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: iconSize, color: textColor ?? Colors.white),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor ?? Colors.white),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
