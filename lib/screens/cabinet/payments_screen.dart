@@ -8,6 +8,7 @@ import '../../models/exam.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/glass_button.dart';
 import '../../widgets/loading_indicator.dart';
+import '../../utils/date_utils.dart';
 
 class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});
@@ -208,7 +209,7 @@ class _PaymentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final examDate = DateTime.parse(exam.datetime);
+    final examDate = parseTashkentDate(exam.datetime);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     return GlassCard(

@@ -5,6 +5,7 @@ import '../theme/app_colors_extension.dart';
 import '../models/exam.dart';
 import '../providers/exam_provider.dart';
 import '../widgets/glass_button.dart';
+import '../utils/date_utils.dart';
 
 class SpeakingSlotModal extends StatefulWidget {
   final int examId;
@@ -96,7 +97,7 @@ class _SpeakingSlotModalState extends State<SpeakingSlotModal> {
 
   String _formatDayLabel(String dateStr) {
     try {
-      final d = DateTime.parse('${dateStr}T00:00:00');
+      final d = parseTashkentDate('${dateStr}T00:00:00');
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return '${months[d.month - 1]} ${d.day}';
     } catch (_) {

@@ -4,6 +4,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_colors_extension.dart';
 import '../../../models/exam.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../utils/date_utils.dart';
 
 class NextExamCountdown extends StatefulWidget {
   final Exam exam;
@@ -31,8 +32,8 @@ class _NextExamCountdownState extends State<NextExamCountdown> {
   }
 
   void _updateCountdown() {
-    final examDate = DateTime.parse(widget.exam.datetime);
-    final now = DateTime.now();
+    final examDate = parseTashkentDate(widget.exam.datetime);
+    final now = DateTime.now().toTashkent;
     setState(() {
       _remaining = examDate.difference(now);
       if (_remaining.isNegative) _remaining = Duration.zero;
@@ -48,7 +49,7 @@ class _NextExamCountdownState extends State<NextExamCountdown> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final examDate = DateTime.parse(widget.exam.datetime);
+    final examDate = parseTashkentDate(widget.exam.datetime);
     final days = _remaining.inDays;
     final hours = _remaining.inHours % 24;
     final minutes = _remaining.inMinutes % 60;

@@ -6,6 +6,7 @@ import '../../providers/exam_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_colors_extension.dart';
 import '../../widgets/loading_indicator.dart';
+import '../../utils/date_utils.dart';
 import '../../dialogs/location_modal.dart';
 import '../../dialogs/credentials_modal.dart';
 import '../../dialogs/promo_code_modal.dart';
@@ -46,8 +47,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   int? _daysUntilNextExam(ExamProvider examProvider) {
     if (examProvider.nextPaidExam == null) return null;
-    final examDate = DateTime.parse(examProvider.nextPaidExam!.datetime);
-    return examDate.difference(DateTime.now()).inDays;
+    final examDate = parseTashkentDate(examProvider.nextPaidExam!.datetime);
+    return examDate.difference(DateTime.now().toTashkent).inDays;
   }
 
   void _handleRegister(int examId) async {

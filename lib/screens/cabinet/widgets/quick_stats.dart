@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_colors_extension.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../utils/date_utils.dart';
 
 class QuickStats extends StatelessWidget {
   final String? nextExamDate;
@@ -50,7 +51,7 @@ class QuickStats extends StatelessWidget {
 
   String _formatDate(String dateStr) {
     try {
-      final date = DateTime.parse(dateStr);
+      final date = parseTashkentDate(dateStr);
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return '${months[date.month - 1]} ${date.day}';
     } catch (_) {

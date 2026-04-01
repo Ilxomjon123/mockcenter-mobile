@@ -6,6 +6,7 @@ import '../../theme/app_colors_extension.dart';
 import '../../models/result.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/loading_indicator.dart';
+import '../../utils/date_utils.dart';
 
 class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});
@@ -150,7 +151,7 @@ class _DetailedResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final examDate = DateTime.parse(result.exam.datetime);
+    final examDate = parseTashkentDate(result.exam.datetime);
 
     return GlassCard(
       padding: const EdgeInsets.all(16),
