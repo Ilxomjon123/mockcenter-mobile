@@ -21,6 +21,7 @@ class _BookScreenState extends State<BookScreen> {
   int? _registeringExamId;
   String? _successMessage;
   String? _errorMessage;
+  String _filterType = 'all'; // 'all', 'ielts', 'cefr'
 
   @override
   void initState() {
@@ -111,6 +112,18 @@ class _BookScreenState extends State<BookScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Filter tabs
+            Row(
+              children: [
+                _FilterTab(label: 'All', isActive: _filterType == 'all', onTap: () => setState(() => _filterType = 'all')),
+                const SizedBox(width: 8),
+                _FilterTab(label: 'IELTS', isActive: _filterType == 'ielts', color: AppColors.primary, onTap: () => setState(() => _filterType = 'ielts')),
+                const SizedBox(width: 8),
+                _FilterTab(label: 'CEFR', isActive: _filterType == 'cefr', color: AppColors.emerald600, onTap: () => setState(() => _filterType = 'cefr')),
+              ],
+            ),
+            const SizedBox(height: 16),
+
             // Success / Error
             if (_successMessage != null) ...[
               GlassCard(
@@ -171,7 +184,7 @@ class _BookScreenState extends State<BookScreen> {
                 ),
               )
             else
-              ...examProvider.upcomingExams.map((exam) => Padding(
+              ...examProvider.upcomingExams.where((e) => _filterType == 'all' || e.type == _filterType).map((exam) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: ExamCard(
                   exam: exam,
@@ -194,6 +207,48 @@ class _BookScreenState extends State<BookScreen> {
                 ),
               )),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterTab extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final Color? color;
+  final VoidCallback onTap;
+
+  const _FilterTab({
+    required this.label,
+    required this.isActive,
+    this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final activeColor = color ?? colors.textPrimary;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? activeColor.withValues(alpha: 0.1) : colors.bgSecondary,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? activeColor.withValues(alpha: 0.3) : colors.border.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+            color: isActive ? activeColor : colors.textMuted,
+          ),
         ),
       ),
     );

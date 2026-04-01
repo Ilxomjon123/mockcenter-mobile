@@ -37,6 +37,12 @@ class AppColors {
   static const Color amber600 = Color(0xFFD97706);
   static const Color amber700 = Color(0xFFB45309);
 
+  // Emerald (CEFR exam type)
+  static const Color emerald400 = Color(0xFF34D399);
+  static const Color emerald500 = Color(0xFF10B981);
+  static const Color emerald600 = Color(0xFF059669);
+  static const Color emerald700 = Color(0xFF047857);
+
   // Telegram
   static const Color telegram = Color(0xFF0088CC);
 

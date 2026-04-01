@@ -51,6 +51,10 @@ class ExamCard extends StatelessWidget {
     return colors.glassBorder;
   }
 
+  bool get _isIelts => exam.type == 'ielts';
+  Color get _typeColor => _isIelts ? AppColors.primary : AppColors.emerald600;
+  Color get _typeColorLight => _isIelts ? AppColors.primary500 : AppColors.emerald500;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -70,19 +74,23 @@ class ExamCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary500, AppColors.primary],
+                  gradient: LinearGradient(
+                    colors: [_typeColorLight, _typeColor],
                   ),
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.25),
+                      color: _typeColor.withValues(alpha: 0.25),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: const Icon(Icons.description_rounded, color: Colors.white, size: 20),
+                child: Icon(
+                  _isIelts ? Icons.auto_stories_rounded : Icons.workspace_premium_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -90,11 +98,11 @@ class ExamCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      exam.type == 'ielts' ? 'IELTS Mock Test' : 'CEFR',
+                      _isIelts ? 'IELTS Mock Test' : 'CEFR Exam',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                        color: _typeColor,
                         letterSpacing: 0.5,
                       ),
                     ),
